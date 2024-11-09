@@ -8,9 +8,9 @@ const StackNavigation: FC = () => {
   const Stack = createNativeStackNavigator<TypeRootStackParamList>();
 
   return (
-    <Stack.Navigator screenOptions={{headerShown: false}}>
-      <Stack.Screen name={'TabNavigation'} component={TabNavigation} />
-
+    <Stack.Navigator
+      initialRouteName={'SignIn'}
+      screenOptions={{headerShown: false}}>
       {routes.map(item => (
         <Stack.Screen
           key={item.name}
@@ -19,6 +19,7 @@ const StackNavigation: FC = () => {
           options={item.options}
         />
       ))}
+      <Stack.Screen name={'TabNavigation'} component={TabNavigation} />
     </Stack.Navigator>
   );
 };

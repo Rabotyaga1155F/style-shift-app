@@ -2,6 +2,8 @@ import {ComponentType} from 'react';
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack';
 
 export type TypeRootStackParamList = {
+  SignIn: undefined;
+  SignUp: undefined;
   HomePage: undefined;
   FavoritePage: undefined;
   ChatPage: undefined;

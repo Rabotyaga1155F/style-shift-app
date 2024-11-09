@@ -1,11 +1,13 @@
 import React, {FC} from 'react';
-import {Text, View} from 'react-native';
 import Layout from '@/components/layout/Layout.tsx';
+import RalewayText from '@/components/ui/fonts/RalewayText.tsx';
 
 const Home: FC = () => {
   return (
     <Layout>
-      <Text className={'text-red-600'}>HomePage</Text>
+      <RalewayText weight={500} className={'text-red-600'}>
+        HomePage
+      </RalewayText>
     </Layout>
   );
 };
