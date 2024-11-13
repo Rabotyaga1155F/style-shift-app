@@ -7,7 +7,7 @@ export interface ILayoutProps extends SafeAreaViewProps {}
 
 const Layout: FC<ILayoutProps> = ({children, className, ...rest}) => {
   return (
-    <SafeAreaView {...rest} className={clsx(`flex-1 bg-white`, className)}>
+    <SafeAreaView {...rest} className={clsx(`flex-1 bg-[#F7F7F9]`, className)}>
       <View className={`px-4 flex-1`}>{children}</View>
     </SafeAreaView>
   );
