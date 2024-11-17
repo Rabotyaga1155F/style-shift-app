@@ -5,20 +5,17 @@ import Bag from '@/assets/icons/bag/bag-black.svg';
 import {FlatList, TouchableOpacity, View} from 'react-native';
 import ProductCard from '@/components/elements/product-card/ProductCard.tsx';
 import {testProduct} from '../../../test-data/product-test.ts';
+import {useTypedNavigation} from '@/hooks/navigation/useTypedNavigation.ts';
 
 const Home: FC = () => {
+  const {navigate} = useTypedNavigation();
+
   return (
     <Layout>
-      <View className="mt-8 flex-row justify-between items-center">
-        <RalewayText
-          weight={500}
-          className="font-bold text-3xl text-center flex-1 pl-10">
-          Главная
-        </RalewayText>
-        <TouchableOpacity className="bg-white p-3 max-w-[50px] rounded-full items-center">
-          <Bag />
-        </TouchableOpacity>
-      </View>
+      <RalewayText weight={500} className="font-bold text-3xl text-center pt-8">
+        Главная
+      </RalewayText>
+
       <RalewayText weight={600} className={'text-lg mt-3'}>
         Популярное
       </RalewayText>
@@ -31,7 +28,14 @@ const Home: FC = () => {
         }}
         numColumns={2}
         data={testProduct}
-        renderItem={product => <ProductCard product={product.item} />}
+        renderItem={product => (
+          <ProductCard
+            onPress={() => {
+              navigate('ProductInfo', {product: product.item});
+            }}
+            product={product.item}
+          />
+        )}
       />
     </Layout>
   );

@@ -1,5 +1,6 @@
 import {ComponentType} from 'react';
 import {NativeStackNavigationOptions} from '@react-navigation/native-stack';
+import {IProduct} from '@/types/product.types.ts';
 
 export type TypeRootStackParamList = {
   SignIn: undefined;
@@ -9,6 +10,10 @@ export type TypeRootStackParamList = {
   ChatPage: undefined;
   ProfilePage: undefined;
   TabNavigation: undefined;
+  ProductInfo: {product: IProduct};
+  SalePage: undefined;
+  OrderHistoryPage: undefined;
+  CreateOrderPage: {product: IProduct};
 };
 
 export interface IRoute {

@@ -1,16 +1,16 @@
 import React, {FC} from 'react';
-import {Text, View} from 'react-native';
-import RalewayText from '@/components/ui/fonts/RalewayText.tsx';
+import {View} from 'react-native';
 import Layout from '@/components/layout/Layout.tsx';
+import RalewayText from '@/components/ui/fonts/RalewayText.tsx';
 
-const Chat: FC = () => {
+const OrderHistory: FC = () => {
   return (
     <Layout>
       <RalewayText weight={600} className={'text-lg text-center mt-10'}>
-        Чат с экспертом
+        Заказы
       </RalewayText>
     </Layout>
   );
 };
 
-export default Chat;
+export default OrderHistory;

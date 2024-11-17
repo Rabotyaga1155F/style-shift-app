@@ -3,9 +3,18 @@ import {TextInput, TextInputProps, TouchableOpacity, View} from 'react-native';
 import clsx from 'clsx';
 import EyeSlash from '@/assets/icons/eye/eye-slash.svg';
 
-interface IFieldProps extends TextInputProps {}
+interface IFieldProps extends TextInputProps {
+  value?: string;
+  controllerOnChange?: (value: string) => void;
+}
 
-const Field: FC<IFieldProps> = ({className, textContentType, ...rest}) => {
+const Field: FC<IFieldProps> = ({
+  className,
+  textContentType,
+  value,
+  controllerOnChange,
+  ...rest
+}) => {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
   return (
@@ -18,6 +27,8 @@ const Field: FC<IFieldProps> = ({className, textContentType, ...rest}) => {
         )}
         placeholderTextColor={'darkgray'}
         secureTextEntry={isPasswordVisible}
+        value={value}
+        onChangeText={controllerOnChange}
       />
       {textContentType == 'password' && (
         <TouchableOpacity
