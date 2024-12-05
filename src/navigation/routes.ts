@@ -9,6 +9,9 @@ import ProductInfoPage from '@/components/pages/product-info/ProductInfo.tsx';
 import SalePage from '@/components/pages/sale/Sale.tsx';
 import OrderHistoryPage from '@/components/pages/order-history/OrderHistory.tsx';
 import CreateOrderPage from '@/components/pages/create-order/CreateOrder.tsx';
+import AddProductPage from '@/components/pages/add-product/AddProduct.tsx';
+import EditProductPage from '@/components/pages/edit-product/EditProduct.tsx';
+import SellerProductsPage from '@/components/pages/seller-products/SellerProducts.tsx';
 
 export const routes: IRoute[] = [
   {
@@ -50,5 +53,17 @@ export const routes: IRoute[] = [
   {
     name: 'CreateOrderPage',
     component: CreateOrderPage,
+  },
+  {
+    name: 'AddProductPage',
+    component: AddProductPage,
+  },
+  {
+    name: 'EditProductPage',
+    component: EditProductPage,
+  },
+  {
+    name: 'SellerProductsPage',
+    component: SellerProductsPage,
   },
 ];

@@ -1,16 +1,8 @@
 import React, {FC} from 'react';
-import {Text, View} from 'react-native';
-import RalewayText from '@/components/ui/fonts/RalewayText.tsx';
-import Layout from '@/components/layout/Layout.tsx';
+import Chat from '@/components/templates/chat/Chat.tsx';
 
-const Chat: FC = () => {
-  return (
-    <Layout>
-      <RalewayText weight={600} className={'text-lg text-center mt-10'}>
-        Чат с экспертом
-      </RalewayText>
-    </Layout>
-  );
+const ChatPage: FC = () => {
+  return <Chat />;
 };
 
-export default Chat;
+export default ChatPage;

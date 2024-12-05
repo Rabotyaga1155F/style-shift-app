@@ -1,4 +1,4 @@
-import React, {FC} from 'react';
+import React, {FC, useState} from 'react';
 import {
   Image,
   TouchableOpacity,
@@ -7,15 +7,24 @@ import {
   ViewProps,
 } from 'react-native';
 import HeartTransparent from '@/assets/icons/heart/heart-transparent.svg';
+import HeartRed from '@/assets/icons/heart/heart-red.svg';
 import RalewayText from '@/components/ui/fonts/RalewayText.tsx';
 import clsx from 'clsx';
 import {IProduct} from '@/types/product.types.ts';
 
 interface IProductCardProps extends TouchableOpacityProps {
   product: IProduct;
+  isFavorite: boolean;
+  onToggleFavorite: (productId: string) => void;
 }
 
-const ProductCard: FC<IProductCardProps> = ({className, product, ...rest}) => {
+const ProductCard: FC<IProductCardProps> = ({
+  className,
+  product,
+  isFavorite,
+  onToggleFavorite,
+  ...rest
+}) => {
   return (
     <TouchableOpacity
       {...rest}
@@ -28,11 +37,17 @@ const ProductCard: FC<IProductCardProps> = ({className, product, ...rest}) => {
         }}
       />
       <View className={'mx-2 mt-3'}>
-        <View className={'ml-auto'}>
-          <HeartTransparent width={20} height={20} />
-        </View>
+        <TouchableOpacity
+          onPress={() => onToggleFavorite(product.productID)}
+          className={'ml-auto'}>
+          {isFavorite ? (
+            <HeartRed width={20} height={20} />
+          ) : (
+            <HeartTransparent width={20} height={20} />
+          )}
+        </TouchableOpacity>
         <RalewayText weight={600} className={'text-matule-blue'}>
-          {product.category}
+          {product.categoryName}
         </RalewayText>
         <RalewayText className={'font-bold text-gray-500 mt-2'}>
           {product.title}

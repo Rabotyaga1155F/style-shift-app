@@ -1,16 +1,35 @@
-import React, {FC} from 'react';
-import {View} from 'react-native';
-import Layout from '@/components/layout/Layout.tsx';
-import RalewayText from '@/components/ui/fonts/RalewayText.tsx';
+import React, {FC, useEffect, useState} from 'react';
+import OrderHistory from '@/components/templates/order-history/OrderHistory.tsx';
+import {useAuthUserStore} from '@/store/access-token';
+import axios from 'axios';
+import {BASE_URL} from '@/constants/url.constants.ts';
 
-const OrderHistory: FC = () => {
+const OrderHistoryPage: FC = () => {
+  const [orders, setOrders] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
+  const user = useAuthUserStore(state => state.user);
+
+  useEffect(() => {
+    fetchOrders();
+  }, []);
+
+  const fetchOrders = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get(
+        `${BASE_URL}/get-orders-for-user/${user?.userID}`,
+      );
+      setOrders(response.data);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <Layout>
-      <RalewayText weight={600} className={'text-lg text-center mt-10'}>
-        Заказы
-      </RalewayText>
-    </Layout>
+    <OrderHistory orders={orders} fetchOrders={fetchOrders} loading={loading} />
   );
 };
 
-export default OrderHistory;
+export default OrderHistoryPage;

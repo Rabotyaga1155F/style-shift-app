@@ -1,7 +1,6 @@
 export interface IUser {
-  id: string;
-  userName: string;
+  userID: string;
+  username: string;
   email: string;
-  phoneNumber: string;
   verification: boolean;
 }

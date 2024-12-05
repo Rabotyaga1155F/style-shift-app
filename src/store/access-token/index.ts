@@ -1,28 +1,29 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {create} from 'zustand';
 import {createJSONStorage, persist} from 'zustand/middleware';
+import {IUser} from '@/types/user.types.ts';
 
 interface IAuthTokenState {
-  token: string;
-  saveToken: (accessToken: string) => void;
-  removeToken: () => void;
+  user: IUser | null;
+  saveUser: (user: IUser) => void;
+  removeUser: () => void;
 }
 
-export const useAuthTokenStore = create<IAuthTokenState>()(
+export const useAuthUserStore = create<IAuthTokenState>()(
   persist(
     set => ({
-      token: '',
-      saveToken: accessToken =>
+      user: null,
+      saveUser: user =>
         set({
-          token: accessToken,
+          user: user,
         }),
-      removeToken: () =>
+      removeUser: () =>
         set({
-          token: '',
+          user: null,
         }),
     }),
     {
-      name: 'auth-token-store',
+      name: 'auth-user-store',
       version: 1,
       storage: createJSONStorage(() => AsyncStorage),
     },

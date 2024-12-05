@@ -3,11 +3,9 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {TypeRootStackParamList} from '@/navigation/navigation.types.ts';
 import TabNavigation from '@/navigation/TabNavigation.tsx';
 import {routes} from '@/navigation/routes.ts';
-import {useAuthTokenStore} from '@/store/access-token';
 
 const StackNavigation: FC = () => {
   const Stack = createNativeStackNavigator<TypeRootStackParamList>();
-  const token = useAuthTokenStore(state => state.token);
 
   return (
     <Stack.Navigator

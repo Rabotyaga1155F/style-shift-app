@@ -1,67 +1,65 @@
-import React, {FC} from 'react';
-import {Image, TouchableOpacity, View} from 'react-native';
-import RalewayText from '@/components/ui/fonts/RalewayText.tsx';
+import React, {FC, useEffect, useState} from 'react';
+import ProductInfo from '@/components/templates/product-info/ProductInfo.tsx';
 import {useTypedRoute} from '@/hooks/navigation/useTypedRoute.ts';
-import Layout from '@/components/layout/Layout.tsx';
-import HeartTransparent from '@/assets/icons/heart/heart-transparent.svg';
-import {DEFAULT_ICON_SIZE} from '@/constants/icon.constants.ts';
-import BagWhite from '@/assets/icons/bag/bag-white.svg';
 import {useTypedNavigation} from '@/hooks/navigation/useTypedNavigation.ts';
+import {useAuthUserStore} from '@/store/access-token';
+import axios from 'axios';
+import {BASE_URL} from '@/constants/url.constants.ts';
 
-const ProductInfo: FC = () => {
+const ProductInfoPage: FC = () => {
   const route = useTypedRoute<'ProductInfo'>();
   const navigation = useTypedNavigation();
+  const user = useAuthUserStore(state => state.user);
 
   const product = route.params.product;
+  const [isFavorite, setIsFavorite] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (user?.userID) {
+      checkFavoriteStatus();
+    }
+  }, [user?.userID]);
+
+  const checkFavoriteStatus = async () => {
+    try {
+      const response = await axios.get(`${BASE_URL}/favorites/${user?.userID}`);
+      const favoriteProducts = response.data;
+      setIsFavorite(
+        favoriteProducts.some((p: any) => p.productID === product.productID),
+      );
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const toggleFavorite = async () => {
+    try {
+      if (isFavorite) {
+        await axios.delete(`${BASE_URL}/favorites`, {
+          data: {userID: user?.userID, productID: product.productID},
+        });
+        setIsFavorite(false);
+      } else {
+        await axios.post(`${BASE_URL}/favorites`, {
+          userID: user?.userID,
+          productID: product.productID,
+        });
+        setIsFavorite(true);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   return (
-    <Layout>
-      <RalewayText weight={600} className={'text-lg text-center mt-10'}>
-        StyleShift
-      </RalewayText>
-      <RalewayText className={'font-bold text-xl pt-8'}>
-        {product.title}
-      </RalewayText>
-      <RalewayText className={'text-base pt-2'}>{product.category}</RalewayText>
-      <RalewayText className={'font-bold text-2xl pt-2'}>
-        ₽{product.price}
-      </RalewayText>
-      <Image
-        className={'mt-4'}
-        height={200}
-        source={{
-          uri: product.imageUrl,
-        }}
-      />
-      <RalewayText className={'pt-4 leading-5'}>
-        {product.description}
-      </RalewayText>
-      <RalewayText className={'text-lg font-bold mt-6'}>
-        ПРОДАВЕЦ: {product.sellerName}
-      </RalewayText>
-      <View className={'flex-row justify-around mt-32'}>
-        <TouchableOpacity
-          className={
-            'bg-gray-300 rounded-full w-14 h-14 justify-center items-center'
-          }>
-          <HeartTransparent
-            height={DEFAULT_ICON_SIZE}
-            width={DEFAULT_ICON_SIZE}
-          />
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => navigation.navigate('CreateOrderPage', {product})}
-          className={
-            'bg-matule-blue  rounded-md flex-row justify-center  items-center w-52'
-          }>
-          <BagWhite />
-          <RalewayText weight={600} className={'text-white text-sm pl-3'}>
-            Создать заказ
-          </RalewayText>
-        </TouchableOpacity>
-      </View>
-    </Layout>
+    <ProductInfo
+      product={product}
+      isFavorite={isFavorite}
+      user={user}
+      toggleFavorite={toggleFavorite}
+      navigation={navigation}
+    />
   );
 };
 
-export default ProductInfo;
+export default ProductInfoPage;

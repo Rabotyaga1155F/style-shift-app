@@ -14,6 +14,9 @@ export type TypeRootStackParamList = {
   SalePage: undefined;
   OrderHistoryPage: undefined;
   CreateOrderPage: {product: IProduct};
+  AddProductPage: undefined;
+  EditProductPage: {product: IProduct};
+  SellerProductsPage: undefined;
 };
 
 export interface IRoute {

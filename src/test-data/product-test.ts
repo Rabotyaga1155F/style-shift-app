@@ -1,5 +1,6 @@
 import {IProduct} from '@/types/product.types.ts';
 
+/*
 export const testProduct: IProduct[] = [
   {
     id: 1,
@@ -55,3 +56,4 @@ export const testProduct: IProduct[] = [
       'https://medlovestore.ru/image/catalog/products_medlove/dlya_kategorii/medicinskie-kombinezony.jpg',
   },
 ];
+*/

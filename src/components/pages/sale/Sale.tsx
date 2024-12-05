@@ -1,16 +1,14 @@
 import React, {FC} from 'react';
-import {View} from 'react-native';
+import {Image, View} from 'react-native';
 import Layout from '@/components/layout/Layout.tsx';
 import RalewayText from '@/components/ui/fonts/RalewayText.tsx';
+import {useAuthUserStore} from '@/store/access-token';
+import Sale from '@/components/templates/sale/Sale.tsx';
 
-const Sale: FC = () => {
-  return (
-    <Layout>
-      <RalewayText weight={600} className={'text-lg text-center mt-10'}>
-        Статус продавца
-      </RalewayText>
-    </Layout>
-  );
+const SalePage: FC = () => {
+  const user = useAuthUserStore(state => state.user);
+
+  return <Sale user={user} />;
 };
 
-export default Sale;
+export default SalePage;

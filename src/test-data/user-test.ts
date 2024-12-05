@@ -1,9 +1,8 @@
 import {IUser} from '@/types/user.types.ts';
 
 export const testUser: IUser = {
-  id: '1',
-  userName: 'Иванов Иван',
-  phoneNumber: '+79081232234',
+  userID: '21313',
+  username: 'Ivanov',
+  email: 'cool.poryadin2014@ya',
   verification: true,
-  email: 'cool.yasdn@mail.ru',
 };

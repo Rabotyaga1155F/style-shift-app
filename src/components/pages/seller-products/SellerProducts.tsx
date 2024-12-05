@@ -1,38 +1,36 @@
 import React, {FC, useEffect, useState} from 'react';
-import Home from '@/components/templates/home/Home.tsx';
+import SellerProducts from '@/components/templates/seller-products/SellerProducts.tsx';
 import {useTypedNavigation} from '@/hooks/navigation/useTypedNavigation.ts';
 import {IProduct} from '@/types/product.types.ts';
 import {useAuthUserStore} from '@/store/access-token';
-import {useFocusEffect} from '@react-navigation/native';
 import axios from 'axios';
 import {BASE_URL} from '@/constants/url.constants.ts';
 
-const HomePage: FC = () => {
-  const {navigate} = useTypedNavigation();
+const SellerProductsPage: FC = () => {
+  const navigation = useTypedNavigation();
   const [products, setProducts] = useState<IProduct[]>([]);
   const [favorites, setFavorites] = useState<string[]>([]);
+  const [loading, setLoading] = useState(false);
   const user = useAuthUserStore(state => state.user);
 
   useEffect(() => {
-    fetchProducts();
     if (user?.userID) {
+      fetchProductsBySeller(user.userID);
       fetchFavorites();
     }
-  }, []);
+  }, [user]);
 
-  useFocusEffect(
-    React.useCallback(() => {
-      fetchProducts();
-      fetchFavorites();
-    }, []),
-  );
-
-  const fetchProducts = async () => {
+  const fetchProductsBySeller = async (sellerId: string) => {
+    setLoading(true);
     try {
-      const response = await axios.get(`${BASE_URL}/products`);
+      const response = await axios.get(
+        `${BASE_URL}/products/seller/${sellerId}`,
+      );
       setProducts(response.data);
     } catch (error) {
       console.error(error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -65,15 +63,15 @@ const HomePage: FC = () => {
   };
 
   return (
-    <Home
-      navigate={navigate}
+    <SellerProducts
+      fetchProductsBySeller={fetchProductsBySeller}
+      products={products}
+      user={user}
+      navigation={navigation}
       toggleFavorite={toggleFavorite}
       favorites={favorites}
-      user={user}
-      products={products}
-      fetchProducts={fetchProducts}
     />
   );
 };
 
-export default HomePage;
+export default SellerProductsPage;
