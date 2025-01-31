@@ -10,7 +10,9 @@ import {BASE_URL} from '@/constants/url.constants.ts';
 const HomePage: FC = () => {
   const {navigate} = useTypedNavigation();
   const [products, setProducts] = useState<IProduct[]>([]);
+  const [filteredProducts, setFilteredProducts] = useState<IProduct[]>([]);
   const [favorites, setFavorites] = useState<string[]>([]);
+  const [searchText, setSearchText] = useState('');
   const user = useAuthUserStore(state => state.user);
 
   useEffect(() => {
@@ -19,6 +21,19 @@ const HomePage: FC = () => {
       fetchFavorites();
     }
   }, []);
+
+  useEffect(() => {
+    // Фильтрация товаров при изменении searchText
+    if (searchText.trim() === '') {
+      setFilteredProducts(products);
+    } else {
+      const lowercasedSearch = searchText.toLowerCase();
+      const filtered = products.filter(product =>
+        product.title.toLowerCase().includes(lowercasedSearch),
+      );
+      setFilteredProducts(filtered);
+    }
+  }, [searchText, products]);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -31,6 +46,7 @@ const HomePage: FC = () => {
     try {
       const response = await axios.get(`${BASE_URL}/products`);
       setProducts(response.data);
+      setFilteredProducts(response.data);
     } catch (error) {
       console.error(error);
     }
@@ -70,8 +86,10 @@ const HomePage: FC = () => {
       toggleFavorite={toggleFavorite}
       favorites={favorites}
       user={user}
-      products={products}
+      products={filteredProducts}
       fetchProducts={fetchProducts}
+      searchText={searchText}
+      setSearchText={setSearchText}
     />
   );
 };

@@ -1,21 +1,25 @@
-import React, {FC, useState} from 'react';
+import React, {FC} from 'react';
 import SignUp from '@/components/templates/sign-up/SignUp.tsx';
 import {useTypedNavigation} from '@/hooks/navigation/useTypedNavigation.ts';
+import {useForm} from 'react-hook-form';
 import axios from 'axios';
+import {BASE_URL} from '@/constants/url.constants.ts';
 
 const SignUpPage: FC = () => {
   const navigation = useTypedNavigation();
 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [username, setUsername] = useState('');
+  const {
+    control,
+    handleSubmit,
+    formState: {errors},
+  } = useForm();
 
-  const handleSignUp = async () => {
+  const handleSignUp = async (data: any) => {
     await axios
-      .post(`${process.env.BASE_URL}/auth/register`, {
-        username,
-        email,
-        password,
+      .post(`${BASE_URL}/auth/register`, {
+        username: data.username,
+        email: data.email,
+        password: data.password,
       })
       .then(function (response) {
         navigation.navigate('SignIn');
@@ -29,10 +33,10 @@ const SignUpPage: FC = () => {
   return (
     <SignUp
       handleSignUp={handleSignUp}
+      handleSubmit={handleSubmit}
+      control={control}
+      errors={errors}
       navigation={navigation}
-      setEmail={setEmail}
-      setPassword={setPassword}
-      setUsername={setUsername}
     />
   );
 };

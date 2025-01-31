@@ -1,71 +1,119 @@
-import React, {FC, useState} from 'react';
+import React, {FC} from 'react';
 import {TouchableOpacity, View} from 'react-native';
 import RalewayText from '@/components/ui/fonts/RalewayText.tsx';
 import Layout from '@/components/layout/Layout.tsx';
 import Field from '@/components/ui/fields/Field.tsx';
 import BigBlueButton from '@/components/ui/buttons/big-blue-button/BigBlueButton.tsx';
-import {useTypedNavigation} from '@/hooks/navigation/useTypedNavigation.ts';
-import axios from 'axios';
+import {Controller} from 'react-hook-form';
 
 interface ISignUpProps {
   handleSignUp: any;
-  setUsername: any;
-  setPassword: any;
-  setEmail: any;
+  handleSubmit: any;
+  control: any;
+  errors: any;
   navigation: any;
 }
 
 const SignUp: FC<ISignUpProps> = ({
   handleSignUp,
+  handleSubmit,
+  control,
+  errors,
   navigation,
-  setUsername,
-  setPassword,
-  setEmail,
 }) => {
   return (
     <Layout>
       <RalewayText className={'text-center font-bold text-3xl mt-20'}>
         Регистрация
       </RalewayText>
-      <RalewayText className={'text-center  text-lg mt-1'}>
+      <RalewayText className={'text-center text-lg mt-1'}>
         Заполните Свои Данные
       </RalewayText>
+
       <View className={'mt-10'}>
-        <RalewayText weight={500} className={'text-md  mt-1'}>
+        <RalewayText weight={500} className={'text-md mt-1'}>
           Ваше имя
         </RalewayText>
-        <Field
-          onChangeText={text => setUsername(text)}
-          className={'mt-4'}
-          placeholder={'xxxxxxxxx'}
+        <Controller
+          control={control}
+          name="username"
+          rules={{required: 'Имя обязательно'}}
+          render={({field: {onChange, value}}) => (
+            <Field
+              controllerOnChange={onChange}
+              value={value}
+              className={'mt-4'}
+              placeholder={'Ваше имя'}
+            />
+          )}
         />
+        {errors.username && (
+          <RalewayText weight={500} className={'text-red-600 mt-1'}>
+            {errors.username.message?.toString()}
+          </RalewayText>
+        )}
       </View>
+
       <View className={'mt-4'}>
-        <RalewayText weight={500} className={'text-md  mt-1'}>
+        <RalewayText weight={500} className={'text-md mt-1'}>
           Email
         </RalewayText>
-        <Field
-          textContentType={'emailAddress'}
-          keyboardType={'email-address'}
-          onChangeText={text => setEmail(text)}
-          className={'mt-4'}
-          placeholder={'text@gmail.com'}
+        <Controller
+          control={control}
+          name="email"
+          rules={{
+            required: 'Email обязателен',
+            pattern: {
+              value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+              message: 'Неверный формат email',
+            },
+          }}
+          render={({field: {onChange, value}}) => (
+            <Field
+              controllerOnChange={onChange}
+              value={value}
+              keyboardType="email-address"
+              className={'mt-4'}
+              placeholder={'text@gmail.com'}
+            />
+          )}
         />
+        {errors.email && (
+          <RalewayText weight={500} className={'text-red-600 mt-1'}>
+            {errors.email.message?.toString()}
+          </RalewayText>
+        )}
       </View>
+
       <View className={'mt-4'}>
-        <RalewayText weight={500} className={'text-md  mt-1'}>
+        <RalewayText weight={500} className={'text-md mt-1'}>
           Пароль
         </RalewayText>
-        <Field
-          onChangeText={text => setPassword(text)}
-          textContentType={'password'}
-          className={'mt-4'}
-          placeholder={'⬤⬤⬤⬤⬤⬤⬤⬤'}
+        <Controller
+          control={control}
+          name="password"
+          rules={{required: 'Пароль обязателен'}}
+          render={({field: {onChange, value}}) => (
+            <Field
+              controllerOnChange={onChange}
+              value={value}
+              textContentType="password"
+              className={'mt-4'}
+              placeholder={'⬤⬤⬤⬤⬤⬤⬤⬤'}
+            />
+          )}
         />
+        {errors.password && (
+          <RalewayText weight={500} className={'text-red-600 mt-1'}>
+            {errors.password.message?.toString()}
+          </RalewayText>
+        )}
       </View>
-      <BigBlueButton onPress={handleSignUp} className={'mt-8'}>
+
+      <BigBlueButton onPress={handleSubmit(handleSignUp)} className={'mt-8'}>
         Зарегистрироваться
       </BigBlueButton>
+
       <View className="mt-28">
         <RalewayText
           weight={500}

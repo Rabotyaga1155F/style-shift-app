@@ -1,9 +1,10 @@
 import React, {FC} from 'react';
 import Layout from '@/components/layout/Layout.tsx';
 import RalewayText from '@/components/ui/fonts/RalewayText.tsx';
-import {Button, FlatList} from 'react-native';
+import {FlatList} from 'react-native';
 import ProductCard from '@/components/elements/product-card/ProductCard.tsx';
 import BigBlueButton from '@/components/ui/buttons/big-blue-button/BigBlueButton.tsx';
+import Search from '@/components/elements/search/Search.tsx';
 
 interface IHomeProps {
   fetchProducts: any;
@@ -12,6 +13,8 @@ interface IHomeProps {
   user: any;
   toggleFavorite: any;
   favorites: any;
+  searchText: any;
+  setSearchText: any;
 }
 
 const Home: FC<IHomeProps> = ({
@@ -21,12 +24,15 @@ const Home: FC<IHomeProps> = ({
   products,
   fetchProducts,
   navigate,
+  setSearchText,
 }) => {
   return (
     <Layout>
       <RalewayText weight={500} className="font-bold text-3xl text-center pt-8">
         Главная
       </RalewayText>
+
+      <Search onChangeText={text => setSearchText(text)} className={'mt-3'} />
 
       <RalewayText weight={600} className={'text-lg mt-3'}>
         Популярное
