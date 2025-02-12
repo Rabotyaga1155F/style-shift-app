@@ -100,7 +100,7 @@ const SignIn: FC<ISignInProps> = ({
         Войти
       </BigBlueButton>
 
-      <View className="mt-40">
+      <View className="mt-36">
         <RalewayText
           weight={500}
           className={'text-base text-gray-600 text-center'}>

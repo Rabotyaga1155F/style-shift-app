@@ -5,6 +5,7 @@ import {useForm} from 'react-hook-form';
 import {useAuthUserStore} from '@/store/access-token';
 import axios from 'axios';
 import {BASE_URL} from '@/constants/url.constants.ts';
+import {Alert} from 'react-native';
 
 const SignInPage: FC = () => {
   const navigation = useTypedNavigation();
@@ -36,6 +37,7 @@ const SignInPage: FC = () => {
       })
       .catch(function (error) {
         console.log(error);
+        Alert.alert('Неверная почта или пароль');
       });
   };
 

@@ -24,7 +24,7 @@ const ProductInfo: FC<IProductInfoProps> = ({
 }) => {
   return (
     <Layout>
-      <ScrollView>
+      <ScrollView showsVerticalScrollIndicator={false}>
         <RalewayText weight={600} className={'text-lg text-center mt-10'}>
           StyleShift
         </RalewayText>
@@ -39,11 +39,11 @@ const ProductInfo: FC<IProductInfoProps> = ({
         </RalewayText>
         <Image
           className={'mt-4'}
-          height={200}
-          source={{
-            uri: product.imageUrl,
-          }}
+          style={{width: '100%', height: 300}}
+          resizeMode="contain"
+          source={{uri: product.imageUrl}}
         />
+
         <RalewayText className={'pt-4 leading-5'}>
           {product.description}
         </RalewayText>
