@@ -4,12 +4,15 @@ import {TypeRootStackParamList} from '@/navigation/navigation.types.ts';
 import {View} from 'react-native';
 import HomePage from '@/components/pages/home/Home.tsx';
 import FavoritePage from '@/components/pages/favorite/Favorite.tsx';
-import ChatPage from '@/components/pages/chat/Chat.tsx';
+import ChatPage from '@/components/pages/support/Support.tsx';
 import ProfilePage from '@/components/pages/profile/Profile.tsx';
+import StyleSelectionPage from '@/components/pages/style-selection/StyleSelection.tsx';
 import HomeActiveIcon from '@/assets/icons/home/home-blue.svg';
 import HomeDisableIcon from '@/assets/icons/home/home-gray.svg';
 import FavoriteActiveIcon from '@/assets/icons/favorite/favorite-blue.svg';
 import FavoriteDisableIcon from '@/assets/icons/favorite/favorite-gray.svg';
+import DiamondActiveIcon from '@/assets/icons/diamond/diamond-blue.svg';
+import DiamondDisableIcon from '@/assets/icons/diamond/diamond-gray.svg';
 import ChatActiveIcon from '@/assets/icons/message/message-blue.svg';
 import ChatDisableIcon from '@/assets/icons/message/message-gray.svg';
 import ProfileActiveIcon from '@/assets/icons/profile/profile-blue.svg';
@@ -17,6 +20,7 @@ import ProfileDisableIcon from '@/assets/icons/profile/profile-gray.svg';
 
 import {SvgProps} from 'react-native-svg';
 import {DEFAULT_ICON_SIZE} from '@/constants/icon.constants.ts';
+import SupportPage from '@/components/pages/support/Support.tsx';
 
 const TabNavigation: FC = () => {
   const Tab = createBottomTabNavigator<TypeRootStackParamList>();
@@ -59,11 +63,21 @@ const TabNavigation: FC = () => {
           options={{
             title: '',
             tabBarIcon: ({focused}) =>
+              renderItem(focused, DiamondActiveIcon, DiamondDisableIcon),
+            tabBarIconStyle: {marginTop: 5},
+          }}
+          name={'StyleSelectionPage'}
+          component={StyleSelectionPage}
+        />
+        <Tab.Screen
+          options={{
+            title: '',
+            tabBarIcon: ({focused}) =>
               renderItem(focused, ChatActiveIcon, ChatDisableIcon),
             tabBarIconStyle: {marginTop: 5},
           }}
-          name={'ChatPage'}
-          component={ChatPage}
+          name={'SupportPage'}
+          component={SupportPage}
         />
         <Tab.Screen
           options={{

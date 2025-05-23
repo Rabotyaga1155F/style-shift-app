@@ -1,176 +1,253 @@
 import React, {FC, useState} from 'react';
-import {View, Alert, ScrollView} from 'react-native';
+import {View, ScrollView, TouchableOpacity, Modal, Alert} from 'react-native';
 import Layout from '@/components/layout/Layout.tsx';
 import RalewayText from '@/components/ui/fonts/RalewayText.tsx';
-import Field from '@/components/ui/fields/Field.tsx';
 import BigBlueButton from '@/components/ui/buttons/big-blue-button/BigBlueButton.tsx';
 import OrderModal from '@/components/elements/order-modal/OrderModal.tsx';
-import {Controller} from 'react-hook-form';
+import {IProduct} from '@/types/product.types';
+import {DELIVERY_PRICE} from '@/constants/price.constants.ts';
+import SelectPickupPointModal from './select-pickup-point-modal/SelectPickupPointModal';
+import Yamap, {Marker, YaMap} from 'react-native-yamap';
+import Svg, {Circle} from 'react-native-svg';
+import axios from 'axios';
+import {BASE_URL} from '@/constants/url.constants.ts';
+import {WebView} from 'react-native-webview';
+import {STATUS_MAPPING} from '@/components/templates/style-selection/statuses.ts';
+import Cancel from '@/assets/icons/cancel/cancel.svg';
+import {DEFAULT_ICON_SIZE} from '@/constants/icon.constants.ts';
+
+Yamap.init('263a39f9-f08e-4586-8aaa-8dcaea00f4a3');
 
 interface ICreateOrderProps {
-  control: any;
-  errors: any;
-  handleSubmit: any;
-  handleCreateOrder: any;
-  product: any;
-  modalVisible: any;
-  handleBackToHome: any;
+  handleCreateOrder: () => void;
+  handleBackToHome: () => void;
+  product: IProduct;
+  modalVisible: boolean;
+  quantity: number;
+  calculateTotalPrice: (quantity: number) => number;
+  setPickupPointID: (id: string | null) => void; // Функция для обновления pickupPointID
 }
 
 const CreateOrder: FC<ICreateOrderProps> = ({
   handleCreateOrder,
-  handleSubmit,
   handleBackToHome,
-  control,
   product,
-  errors,
   modalVisible,
+  quantity,
+  calculateTotalPrice,
+  setPickupPointID,
 }) => {
+  const [modalPickupPointVisible, setModalPickupPointVisible] = useState(false);
+  const [selectedCity, setSelectedCity] = useState<any | null>(null);
+  const [selectedPickupPoint, setSelectedPickupPoint] = useState<any | null>(
+    null,
+  );
+  const [mapKey, setMapKey] = useState(0);
+
+  const [paymentUrl, setPaymentUrl] = useState<string | null>(null);
+  const [paymentId, setPaymentId] = useState('');
+
+  const openModal = () => setModalPickupPointVisible(true);
+  const closeModal = () => setModalPickupPointVisible(false);
+
+  const handleCityAndPickupPointSelection = (city: any, pickupPoint: any) => {
+    setSelectedCity(city);
+    setSelectedPickupPoint(pickupPoint);
+    setMapKey(prevKey => prevKey + 1);
+    setPickupPointID(pickupPoint.pickupPointId);
+    closeModal();
+  };
+
+  const calculatePrice = (quantity: number) => quantity * product.price;
+
+  const getEstimatedDate = () => {
+    const today = new Date();
+    today.setDate(today.getDate() + 7);
+    return today.toLocaleDateString('ru-RU');
+  };
+
+  const createPayment = async (
+    amount: number,
+    description: string,
+    returnUrl: string,
+  ) => {
+    try {
+      const response = await axios.post(`${BASE_URL}/payment/create-payment`, {
+        amount,
+        description,
+        returnUrl,
+      });
+      setPaymentUrl(response.data.confirmationUrl);
+      setPaymentId(response.data.paymentId);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const capturePayment = async (paymentId: string) => {
+    try {
+      const response = await axios.post(`${BASE_URL}/payment/capture-payment`, {
+        paymentId,
+      });
+      return response.data;
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  };
+
   return (
     <Layout>
-      <ScrollView>
-        <RalewayText weight={600} className={'text-lg text-center mt-10'}>
+      <SelectPickupPointModal
+        visible={modalPickupPointVisible}
+        onRequestClose={closeModal}
+        onSelect={handleCityAndPickupPointSelection}
+      />
+
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <RalewayText weight={700} className="text-xl text-center mt-10">
           Создание заказа
         </RalewayText>
 
-        <RalewayText weight={500} className={'text-base mt-3'}>
-          Контактная информация
+        <RalewayText weight={600} className="text-lg  mt-2">
+          Выберите пункт выдачи заказа
         </RalewayText>
 
-        <View className={'mt-4'}>
-          <RalewayText weight={500} className={'text-md mt-1'}>
-            Номер телефона
-          </RalewayText>
-          <Controller
-            control={control}
-            name="phoneNumber"
-            rules={{required: 'Номер телефона обязателен'}}
-            render={({field: {onChange, value}}) => (
-              <Field
-                value={value}
-                controllerOnChange={onChange}
-                textContentType={'telephoneNumber'}
-                keyboardType={'numeric'}
-                className={'mt-4'}
-                placeholder={'+7 *** *** ** **'}
-              />
-            )}
-          />
-          {errors.phoneNumber && (
-            <RalewayText weight={500} className={'text-red-600 mt-1'}>
-              {errors.phoneNumber.message?.toString()}
-            </RalewayText>
-          )}
-        </View>
+        <RalewayText weight={500} className="text-base mt-3">
+          Пункт StyleShift:{' '}
+          {selectedCity && selectedPickupPoint
+            ? `${selectedCity.name}, ${selectedPickupPoint.address}`
+            : 'Не выбрано'}
+        </RalewayText>
 
-        <View className={'mt-4'}>
-          <RalewayText weight={500} className={'text-md mt-1'}>
-            Город
-          </RalewayText>
-          <Controller
-            control={control}
-            name="city"
-            rules={{required: 'Город обязателен'}}
-            render={({field: {onChange, value}}) => (
-              <Field
-                value={value}
-                controllerOnChange={onChange}
-                textContentType={'addressCity'}
-                className={'mt-4'}
-                placeholder={'Москва'}
-              />
-            )}
-          />
-          {errors.city && (
-            <RalewayText weight={500} className={'text-red-600 mt-1'}>
-              {errors.city.message?.toString()}
-            </RalewayText>
-          )}
-        </View>
-
-        <View className={'mt-4'}>
-          <RalewayText weight={500} className={'text-md mt-1'}>
-            Улица, дом, кв
-          </RalewayText>
-          <Controller
-            control={control}
-            name="address"
-            rules={{required: 'Адрес обязателен'}}
-            render={({field: {onChange, value}}) => (
-              <Field
-                value={value}
-                controllerOnChange={onChange}
-                textContentType={'addressCity'}
-                className={'mt-4'}
-                placeholder={'Набережный проспект 21, 44'}
-              />
-            )}
-          />
-          {errors.address && (
-            <RalewayText weight={500} className={'text-red-600 mt-1'}>
-              {errors.address.message?.toString()}
-            </RalewayText>
-          )}
-        </View>
-
-        <View className={'mt-4'}>
-          <RalewayText weight={500} className={'text-md mt-1'}>
-            Комментарий
-          </RalewayText>
-          <Controller
-            control={control}
-            name="comment"
-            render={({field: {onChange, value}}) => (
-              <Field
-                value={value}
-                controllerOnChange={onChange}
-                className={'mt-4'}
-              />
-            )}
-          />
-          {errors.comment && (
-            <RalewayText weight={500} className={'text-red-600 mt-1'}>
-              {errors.comment.message?.toString()}
-            </RalewayText>
-          )}
-        </View>
-
-        <View className={'flex-row justify-between mt-4'}>
-          <RalewayText weight={500} className={'text-base text-gray-600'}>
-            Сумма:
-          </RalewayText>
-          <RalewayText weight={600} className={'font-bold'}>
-            ₽{product.price}
-          </RalewayText>
-        </View>
-
-        <View className={'flex-row justify-between mt-4'}>
-          <RalewayText weight={500} className={'text-base text-gray-600'}>
-            Доставка:
-          </RalewayText>
-          <RalewayText weight={600} className={'font-bold'}>
-            ₽300.00
-          </RalewayText>
-        </View>
-
-        <View className={'border-b border-dashed h-4'}></View>
-
-        <View className={'flex-row justify-between mt-4'}>
-          <RalewayText weight={500} className={'text-base text-gray-600'}>
-            Итого:
-          </RalewayText>
-          <RalewayText weight={600} className={'font-bold'}>
-            ₽{product.price + 300}
-          </RalewayText>
-        </View>
-
-        <BigBlueButton
-          onPress={handleSubmit(handleCreateOrder)}
-          className={'mt-6 mb-6'}>
-          Подтвердить
+        <BigBlueButton className="mt-3" onPress={openModal}>
+          Изменить ПВЗ
         </BigBlueButton>
 
+        {selectedPickupPoint &&
+          selectedPickupPoint.latitude &&
+          selectedPickupPoint.longitude && (
+            <>
+              <View className="mt-4 h-64 rounded-lg overflow-hidden">
+                <YaMap
+                  key={mapKey}
+                  initialRegion={{
+                    lat: selectedPickupPoint.latitude,
+                    lon: selectedPickupPoint.longitude,
+                    zoom: 15,
+                    azimuth: 0,
+                    tilt: 0,
+                  }}
+                  style={{flex: 1}}>
+                  <Marker
+                    point={{
+                      lat: selectedPickupPoint.latitude,
+                      lon: selectedPickupPoint.longitude,
+                    }}>
+                    <View
+                      style={{justifyContent: 'center', alignItems: 'center'}}>
+                      <Svg width="20" height="20" viewBox="0 0 40 40">
+                        <Circle
+                          cx="20"
+                          cy="20"
+                          r="18"
+                          fill="#48B2E7"
+                          stroke="#fff"
+                          strokeWidth="3"
+                        />
+                      </Svg>
+                      <RalewayText
+                        style={{
+                          color: '#fff',
+                          fontSize: 10,
+                          fontWeight: 'bold',
+                        }}>
+                        ПВЗ StyleShift
+                      </RalewayText>
+                    </View>
+                  </Marker>
+                </YaMap>
+              </View>
+
+              <RalewayText
+                weight={500}
+                className="text-sm text-gray-500 mt-4 text-center">
+                Приблизительная дата получения: {getEstimatedDate()}
+              </RalewayText>
+
+              <View className="flex-row justify-between mt-4">
+                <RalewayText weight={500} className="text-base text-gray-600">
+                  Сумма:
+                </RalewayText>
+                <RalewayText weight={600} className="font-bold">
+                  ₽{calculatePrice(quantity)}
+                </RalewayText>
+              </View>
+
+              <View className="flex-row justify-between mt-4">
+                <RalewayText weight={500} className="text-base text-gray-600">
+                  Доставка:
+                </RalewayText>
+                <RalewayText weight={600} className="font-bold">
+                  ₽{DELIVERY_PRICE}
+                </RalewayText>
+              </View>
+
+              <View className="border-b border-dashed h-4"></View>
+
+              <View className="flex-row justify-between mt-4">
+                <RalewayText weight={500} className="text-base text-gray-600">
+                  Итого:
+                </RalewayText>
+                <RalewayText weight={600} className="font-bold">
+                  ₽{calculateTotalPrice(quantity)}
+                </RalewayText>
+              </View>
+
+              <BigBlueButton
+                onPress={() => {
+                  createPayment(
+                    calculatePrice(quantity),
+                    product.title,
+                    'style-shift://style-selection',
+                  );
+                }}
+                className="mt-6 mb-6">
+                Оплатить
+              </BigBlueButton>
+            </>
+          )}
+
         <OrderModal visible={modalVisible} onClose={handleBackToHome} />
+        {paymentUrl && (
+          <Modal visible={true} animationType="slide">
+            <View className={'flex-1'}>
+              <WebView
+                source={{uri: paymentUrl}}
+                onNavigationStateChange={event => {
+                  if (event.url.includes('success')) {
+                    setPaymentUrl(null);
+                    capturePayment(paymentId).then(paymentData => {
+                      const amount = paymentData.amount.value;
+
+                      handleCreateOrder();
+                    });
+                  }
+
+                  if (event.url.includes('cancel')) {
+                    setPaymentUrl(null);
+                    Alert.alert('Оплата отменена');
+                  }
+                }}
+              />
+              <TouchableOpacity
+                onPress={() => setPaymentUrl(null)}
+                className={'absolute top-5 right-5'}>
+                <Cancel width={DEFAULT_ICON_SIZE} height={DEFAULT_ICON_SIZE} />
+              </TouchableOpacity>
+            </View>
+          </Modal>
+        )}
       </ScrollView>
     </Layout>
   );

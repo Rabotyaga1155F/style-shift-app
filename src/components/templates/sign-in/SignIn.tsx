@@ -90,11 +90,12 @@ const SignIn: FC<ISignInProps> = ({
         )}
       </View>
 
-      <TouchableOpacity>
-        <RalewayText className={'text-right mt-3 text-gray-600'}>
-          Восстановить
-        </RalewayText>
-      </TouchableOpacity>
+      <View className="items-end mt-3">
+        <TouchableOpacity
+          onPress={() => navigation.navigate('ForgotPasswordPage')}>
+          <RalewayText className="text-gray-600">Восстановить</RalewayText>
+        </TouchableOpacity>
+      </View>
 
       <BigBlueButton onPress={handleSubmit(handleSignIn)} className={'mt-12'}>
         Войти

@@ -6,9 +6,16 @@ import {useTypedNavigation} from '@/hooks/navigation/useTypedNavigation.ts';
 
 interface IOrderModalProps extends ModalProps {
   onClose: () => void;
+  text?: string;
+  buttonText?: string;
 }
 
-const OrderModal: FC<IOrderModalProps> = ({onClose, ...rest}) => {
+const OrderModal: FC<IOrderModalProps> = ({
+  onClose,
+  buttonText = 'Вернуться к покупкам',
+  text = 'Вы успешно оформили заказ',
+  ...rest
+}) => {
   return (
     <Modal {...rest} animationType="slide" transparent={true}>
       <View className={'flex-1 justify-center items-center'}>
@@ -17,10 +24,10 @@ const OrderModal: FC<IOrderModalProps> = ({onClose, ...rest}) => {
             <Image source={require('../../../assets/images/happy.png')} />
           </View>
           <RalewayText weight={500} className={'text-xl text-center'}>
-            Вы успешно оформили заказ!
+            {text}
           </RalewayText>
           <BigBlueButton className={'px-2 mt-8'} onPress={onClose}>
-            Вернуться к покупкам
+            {buttonText}
           </BigBlueButton>
         </View>
       </View>

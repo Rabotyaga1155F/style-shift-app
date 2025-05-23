@@ -7,16 +7,22 @@ export type TypeRootStackParamList = {
   SignUp: undefined;
   HomePage: undefined;
   FavoritePage: undefined;
-  ChatPage: undefined;
+  SupportPage: undefined;
   ProfilePage: undefined;
   TabNavigation: undefined;
   ProductInfo: {product: IProduct};
   SalePage: undefined;
   OrderHistoryPage: undefined;
-  CreateOrderPage: {product: IProduct};
+  OrderHistoryInfoPage: {order: any};
+  CreateOrderPage: {product: IProduct; quantity: number; size: string};
   AddProductPage: undefined;
   EditProductPage: {product: IProduct};
   SellerProductsPage: undefined;
+  StyleSelectionPage: undefined;
+  ForgotPasswordPage: undefined;
+  NewPasswordPage: {email: string; code: string};
+  ForgotPasswordCode: {email: string};
+  SaleStatsPage: undefined;
 };
 
 export interface IRoute {

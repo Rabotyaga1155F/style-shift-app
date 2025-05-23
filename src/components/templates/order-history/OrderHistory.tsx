@@ -1,4 +1,4 @@
-import React, {FC} from 'react';
+import React, {FC, useEffect} from 'react';
 import {FlatList, View} from 'react-native';
 import Layout from '@/components/layout/Layout.tsx';
 import RalewayText from '@/components/ui/fonts/RalewayText.tsx';
@@ -8,12 +8,14 @@ interface IOrderHistoryProps {
   loading: any;
   fetchOrders: any;
   orders: any;
+  navigation: any;
 }
 
 const OrderHistory: FC<IOrderHistoryProps> = ({
   orders,
   fetchOrders,
   loading,
+  navigation,
 }) => {
   return (
     <Layout>
@@ -27,17 +29,24 @@ const OrderHistory: FC<IOrderHistoryProps> = ({
         className={'mt-5'}
         numColumns={1}
         data={orders}
-        renderItem={({item: order}) => <HistoryProductCard order={order} />}
-        keyExtractor={item => item.OrderID}
+        renderItem={({item: order}) => (
+          <HistoryProductCard
+            onPress={() => {
+              navigation.navigate('OrderHistoryInfoPage', {order});
+            }}
+            order={order}
+          />
+        )}
+        keyExtractor={item => item.orderID}
         contentContainerStyle={{paddingBottom: 20}}
         ListEmptyComponent={
-          <>
-            !loading && (
-            <RalewayText className="text-center text-gray-500 mt-5">
-              Заказов пока нет.
-            </RalewayText>
-            )
-          </>
+          <View>
+            {!loading && (
+              <RalewayText className="text-center text-gray-500 mt-5">
+                Заказов пока нет.
+              </RalewayText>
+            )}
+          </View>
         }
       />
     </Layout>

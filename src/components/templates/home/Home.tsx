@@ -41,10 +41,10 @@ const Home: FC<IHomeProps> = ({
         refreshing={false}
         onRefresh={fetchProducts}
         showsVerticalScrollIndicator={false}
-        className={'mt-5'}
+        className={'mt-5 mx-2'}
         columnWrapperStyle={{
           justifyContent: 'space-between',
-          marginVertical: 5,
+          marginBottom: 15,
         }}
         numColumns={2}
         data={products}

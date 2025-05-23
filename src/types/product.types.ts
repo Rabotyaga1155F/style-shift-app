@@ -7,5 +7,11 @@ export interface IProduct {
   title: string;
   description: string;
   price: number;
+  sizes: ISize[];
   imageUrl: string;
+}
+
+export interface ISize {
+  stock: number;
+  size: string;
 }

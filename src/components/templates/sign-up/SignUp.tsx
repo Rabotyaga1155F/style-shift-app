@@ -1,5 +1,5 @@
 import React, {FC} from 'react';
-import {TouchableOpacity, View} from 'react-native';
+import {Keyboard, Modal, ScrollView, TextInput, TouchableOpacity, TouchableWithoutFeedback, View} from 'react-native';
 import RalewayText from '@/components/ui/fonts/RalewayText.tsx';
 import Layout from '@/components/layout/Layout.tsx';
 import Field from '@/components/ui/fields/Field.tsx';
@@ -12,6 +12,11 @@ interface ISignUpProps {
   control: any;
   errors: any;
   navigation: any;
+  setModalVisible:any
+  modalVisible:boolean;
+  handleVerifyCode:any
+  setVerifyCode:any
+  getValues:any
 }
 
 const SignUp: FC<ISignUpProps> = ({
@@ -20,9 +25,15 @@ const SignUp: FC<ISignUpProps> = ({
   control,
   errors,
   navigation,
+  setModalVisible,
+  modalVisible,
+  setVerifyCode,
+  handleVerifyCode,
+  getValues
 }) => {
   return (
     <Layout>
+      <ScrollView showsVerticalScrollIndicator={false}>
       <RalewayText className={'text-center font-bold text-3xl mt-20'}>
         Регистрация
       </RalewayText>
@@ -114,7 +125,7 @@ const SignUp: FC<ISignUpProps> = ({
         Зарегистрироваться
       </BigBlueButton>
 
-      <View className="mt-28">
+      <View className="mt-4 pb-3">
         <RalewayText
           weight={500}
           className={'text-base text-gray-600 text-center'}>
@@ -128,6 +139,37 @@ const SignUp: FC<ISignUpProps> = ({
           </TouchableOpacity>
         </RalewayText>
       </View>
+      <Modal
+          animationType="slide"
+          transparent={true}
+          visible={modalVisible}
+          onRequestClose={() => setModalVisible(false)}
+        >
+          <TouchableWithoutFeedback onPress={() => setModalVisible(false)}>
+            <View className={'flex-1 justify-center items-center bg-black/50'}>
+              <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+                <View className={'mt-4 bg-white rounded-3xl py-10 px-10 items-center'}>
+                  <RalewayText weight={500} className={'text-base text-center mb-3'}>
+                    Введите код подтверждения, отправленный на вашу почту
+                  </RalewayText>
+                  <TextInput
+                    onChangeText={(text) => setVerifyCode(text)}
+                    keyboardType='number-pad'
+                    className={'text-center w-48 bg-gray-200 rounded-xl py-4 text-black font-medium max-h-12'}
+                    placeholderTextColor={'darkgray'}
+                  />
+                  <BigBlueButton
+                    onPress={() => handleVerifyCode({ email: getValues('email') })}
+                    className={'px-2 mt-8'}>
+                    Подтвердить
+                  </BigBlueButton>
+                </View>
+              </TouchableWithoutFeedback>
+            </View>
+          </TouchableWithoutFeedback>
+        </Modal>
+      </ScrollView>
+
     </Layout>
   );
 };

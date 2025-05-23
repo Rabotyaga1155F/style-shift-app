@@ -24,26 +24,32 @@ const Favorite: FC<IFavoriteProps> = ({
       <RalewayText weight={600} className={'text-lg text-center mt-10'}>
         Избранное
       </RalewayText>
-      <FlatList
-        refreshing={false}
-        onRefresh={fetchFavorites}
-        showsVerticalScrollIndicator={false}
-        className={'mt-5'}
-        columnWrapperStyle={{
-          justifyContent: 'space-between',
-          marginVertical: 5,
-        }}
-        numColumns={2}
-        data={favoriteProducts}
-        renderItem={({item: product}) => (
-          <ProductCard
-            onPress={() => navigate('ProductInfo', {product})}
-            product={product}
-            isFavorite={favorites.includes(product.productID)}
-            onToggleFavorite={toggleFavorite}
-          />
-        )}
-      />
+      {favoriteProducts.length > 0 ? (
+        <FlatList
+          refreshing={false}
+          onRefresh={fetchFavorites}
+          showsVerticalScrollIndicator={false}
+          className={'mt-5'}
+          columnWrapperStyle={{
+            justifyContent: 'space-between',
+            marginVertical: 5,
+          }}
+          numColumns={2}
+          data={favoriteProducts}
+          renderItem={({item: product}) => (
+            <ProductCard
+              onPress={() => navigate('ProductInfo', {product})}
+              product={product}
+              isFavorite={favorites.includes(product.productID)}
+              onToggleFavorite={toggleFavorite}
+            />
+          )}
+        />
+      ) : (
+        <RalewayText weight={500} className={'text-lg text-center mt-60'}>
+          В избранном пока пусто
+        </RalewayText>
+      )}
     </Layout>
   );
 };

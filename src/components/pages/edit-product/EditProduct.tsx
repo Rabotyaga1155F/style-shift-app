@@ -1,4 +1,4 @@
-import React, {FC} from 'react';
+import React, {FC, useEffect, useState} from 'react';
 import EditProduct from '@/components/templates/edit-product/EditProduct.tsx';
 import {useAuthUserStore} from '@/store/access-token';
 import {useTypedRoute} from '@/hooks/navigation/useTypedRoute.ts';
@@ -12,37 +12,61 @@ const EditProductPage: FC = () => {
   const user = useAuthUserStore(state => state.user);
   const {params} = useTypedRoute<'EditProductPage'>();
   const product = params.product;
+  const [sizesJson, setSizesJson] = useState(product.sizes);
   const navigation = useTypedNavigation();
   const {
     control,
     handleSubmit,
     formState: {errors},
-  } = useForm();
+  } = useForm({
+    defaultValues: {
+      title: product.title,
+      description: product.description,
+      price: product.price.toString(),
+      imageUrl: product.imageUrl,
+      sizesJson: sizesJson,
+    },
+  });
 
   const handleCreateOrder = async (data: any) => {
-    await editProduct(data);
+    const formData = new FormData();
+
+    // Преобразуем данные в нужный формат
+    formData.append('sellerID', user?.userID || '');
+    formData.append('categoryID', product.categoryID);
+    formData.append('title', data.title || product.title);
+    formData.append('description', data.description || product.description);
+    formData.append('price', Number(data.price) || product.price);
+
+    // Используем актуальное состояние sizesJson
+    formData.append('sizesJson', JSON.stringify(sizesJson));
+
+    // Проверяем и добавляем изображение
+    if (data.imageUrl && data.imageUrl !== product.imageUrl) {
+      formData.append('image', {
+        uri: data.imageUrl,
+        name: data.imageUrl.split('/').pop(),
+        type: 'image/jpeg',
+      });
+    }
+
+    await editProduct(formData);
     console.log('data: ', JSON.stringify(data));
   };
 
-  const editProduct = (data: any) => {
+  const editProduct = (formData: FormData) => {
     axios
-      .put(`${BASE_URL}/products/` + product.productID, {
-        sellerID: user?.userID,
-        categoryID: product.categoryID,
-        title: data.title || product.title,
-        description: data.description || product.description,
-        price: Number(data.price) || product.price,
-        stock: 1,
-        imageUrl: data.imageUrl || product.imageUrl,
+      .put(`${BASE_URL}/products/` + product.productID, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
       })
-      .then(function (response) {
+      .then(response => {
         console.log(response.data);
-        Alert.alert('Заказ успешно изменен');
         navigation.replace('TabNavigation');
       })
-      .catch(function (error) {
+      .catch(error => {
         console.log(error);
-        Alert.alert(error);
       });
   };
 
@@ -51,7 +75,7 @@ const EditProductPage: FC = () => {
       .delete(`${BASE_URL}/products/` + product.productID)
       .then(function (response) {
         console.log(response.data);
-        Alert.alert('Заказ успешно удален');
+        Alert.alert('Товар успешно удален');
         navigation.replace('TabNavigation');
       })
       .catch(function (error) {
@@ -62,6 +86,8 @@ const EditProductPage: FC = () => {
 
   return (
     <EditProduct
+      sizesJson={sizesJson}
+      setSizesJson={setSizesJson}
       product={product}
       control={control}
       errors={errors}

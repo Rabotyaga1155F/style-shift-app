@@ -9,10 +9,24 @@ import {BASE_URL} from '@/constants/url.constants.ts';
 const ProductInfoPage: FC = () => {
   const route = useTypedRoute<'ProductInfo'>();
   const navigation = useTypedNavigation();
-  const user = useAuthUserStore(state => state.user);
+  const user = useAuthUserStore(state => state.user!);
 
   const product = route.params.product;
   const [isFavorite, setIsFavorite] = useState<boolean>(false);
+
+  useEffect(() => {
+    const incrementProductViews = async () => {
+      try {
+        await axios.post(
+          `${BASE_URL}/products/increment-views/${product.productID}`,
+        );
+      } catch (error) {
+        console.error('Ошибка при увеличении просмотров:', error);
+      }
+    };
+
+    incrementProductViews();
+  }, [product.productID]);
 
   useEffect(() => {
     if (user?.userID) {

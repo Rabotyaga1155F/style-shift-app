@@ -14,6 +14,7 @@ const HomePage: FC = () => {
   const [favorites, setFavorites] = useState<string[]>([]);
   const [searchText, setSearchText] = useState('');
   const user = useAuthUserStore(state => state.user);
+  const removeUser = useAuthUserStore(state => state.removeUser);
 
   useEffect(() => {
     fetchProducts();
@@ -23,7 +24,6 @@ const HomePage: FC = () => {
   }, []);
 
   useEffect(() => {
-    // Фильтрация товаров при изменении searchText
     if (searchText.trim() === '') {
       setFilteredProducts(products);
     } else {
@@ -35,15 +35,28 @@ const HomePage: FC = () => {
     }
   }, [searchText, products]);
 
-  useFocusEffect(
-    React.useCallback(() => {
-      fetchProducts();
+  //ИЗМЕНЕНО
+  useEffect(() => {
+    fetchProducts();
+    if (user?.userID) {
       fetchFavorites();
-    }, []),
-  );
+    }
+  }, []);
 
   const fetchProducts = async () => {
     try {
+      if (user?.userID) {
+        const banResponse = await axios.get(
+          `${BASE_URL}/users/is-banned/${user.userID}`,
+        );
+        console.log(banResponse.data.isBanned);
+        if (banResponse.data.isBanned) {
+          removeUser();
+          navigate('SignIn');
+          return;
+        }
+      }
+
       const response = await axios.get(`${BASE_URL}/products`);
       setProducts(response.data);
       setFilteredProducts(response.data);
