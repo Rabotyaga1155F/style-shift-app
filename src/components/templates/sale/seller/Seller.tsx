@@ -112,6 +112,7 @@ export default function Seller({user}: ISellerProps) {
       <FlatList
         refreshing={loading}
         onRefresh={fetchOrders}
+        removeClippedSubviews={false}
         showsVerticalScrollIndicator={false}
         className={'mt-5'}
         numColumns={1}

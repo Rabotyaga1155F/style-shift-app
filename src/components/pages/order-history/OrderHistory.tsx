@@ -23,17 +23,11 @@ const OrderHistoryPage: FC = () => {
       );
 
       const sortedOrders = response.data.sort((a: any, b: any) => {
-        const endStatuses = ['отменён', 'завершён', 'завершен'];
-
-        const aStatus = a.deliveryStatus?.toLowerCase().trim();
-        const bStatus = b.deliveryStatus?.toLowerCase().trim();
-
-        const aIsEnd = endStatuses.includes(aStatus);
-        const bIsEnd = endStatuses.includes(bStatus);
-
-        if (aIsEnd === bIsEnd) return 0;
-        return aIsEnd ? 1 : -1;
+        const dateA = new Date(a.createdAt).getTime();
+        const dateB = new Date(b.createdAt).getTime();
+        return dateB - dateA;
       });
+
 
       setOrders(sortedOrders);
     } catch (error) {

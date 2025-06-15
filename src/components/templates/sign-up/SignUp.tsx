@@ -103,7 +103,14 @@ const SignUp: FC<ISignUpProps> = ({
         <Controller
           control={control}
           name="password"
-          rules={{required: 'Пароль обязателен'}}
+          rules={{
+            required: 'Пароль обязателен',
+            pattern: {
+              value: /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_\-+=\[\]{};':"\\|,.<>/?]).{8,}$/,
+              message:
+                'Пароль должен содержать минимум 8 символов, одну заглавную букву, одну цифру и один спецсимвол',
+            },
+          }}
           render={({field: {onChange, value}}) => (
             <Field
               controllerOnChange={onChange}
@@ -114,6 +121,7 @@ const SignUp: FC<ISignUpProps> = ({
             />
           )}
         />
+
         {errors.password && (
           <RalewayText weight={500} className={'text-red-600 mt-1'}>
             {errors.password.message?.toString()}

@@ -1,13 +1,8 @@
-import React, {FC, useEffect, useState} from 'react';
-import {FlatList, View} from 'react-native';
+import React, {FC} from 'react';
+import {FlatList} from 'react-native';
 import Layout from '@/components/layout/Layout.tsx';
 import RalewayText from '@/components/ui/fonts/RalewayText.tsx';
 import ProductCard from '@/components/elements/product-card/ProductCard.tsx';
-import axios from 'axios';
-import {BASE_URL} from '@/constants/url.constants.ts';
-import {IProduct} from '@/types/product.types.ts';
-import {useAuthUserStore} from '@/store/access-token';
-import {useTypedNavigation} from '@/hooks/navigation/useTypedNavigation.ts';
 
 interface ISellerProductsProps {
   user: any;
@@ -32,6 +27,7 @@ const SellerProducts: FC<ISellerProductsProps> = ({
       </RalewayText>
       <FlatList
         refreshing={false}
+        removeClippedSubviews={false}
         onRefresh={() => {
           if (user?.userID) {
             fetchProductsBySeller(user.userID);

@@ -5,7 +5,7 @@ import {useAuthUserStore} from '@/store/access-token';
 
 const ProfilePage: FC = () => {
   const navigation = useTypedNavigation();
-  const user = useAuthUserStore(state => state.user);
+  const user = useAuthUserStore(state => state.user!);
   const removeUser = useAuthUserStore(state => state.removeUser);
 
   return (

@@ -1,4 +1,4 @@
-import React, {FC, useEffect} from 'react';
+import React, {FC} from 'react';
 import {FlatList, View} from 'react-native';
 import Layout from '@/components/layout/Layout.tsx';
 import RalewayText from '@/components/ui/fonts/RalewayText.tsx';
@@ -28,6 +28,7 @@ const OrderHistory: FC<IOrderHistoryProps> = ({
         showsVerticalScrollIndicator={false}
         className={'mt-5'}
         numColumns={1}
+        removeClippedSubviews={false}
         data={orders}
         renderItem={({item: order}) => (
           <HistoryProductCard
