@@ -1,4 +1,4 @@
-import React, {FC, useState} from 'react';
+import React, {FC} from 'react';
 import Layout from '@/components/layout/Layout.tsx';
 import RalewayText from '@/components/ui/fonts/RalewayText.tsx';
 import {Controller} from 'react-hook-form';
@@ -144,9 +144,18 @@ const AddProduct: FC<IAddProductProps> = ({
             name="price"
             rules={{
               required: 'Обязательное поле',
-              min: {
-                value: 1,
-                message: 'Цена не может быть меньше 1',
+              validate: value => {
+                const number = Number(value);
+                if (!/^\d+$/.test(value)) {
+                  return 'Цена должна быть целым положительным числом';
+                }
+                if (number < 1) {
+                  return 'Цена не может быть меньше 1';
+                }
+                if (value.length > 7) {
+                  return 'Цена не может быть больше 7 цифр';
+                }
+                return true;
               },
             }}
             render={({field: {onChange, value}}) => (
@@ -158,6 +167,7 @@ const AddProduct: FC<IAddProductProps> = ({
               />
             )}
           />
+
           {errors.price && (
             <RalewayText weight={500} className={'text-red-600 mt-1'}>
               {errors.price.message?.toString()}

@@ -60,14 +60,15 @@ const AddProductPage: FC = () => {
 
   const handleAddProduct = async (data: any) => {
     const hasInvalidSize = sizesJson.some(
-      size => size.size.trim() === '' || size.stock <= 0,
+      size => size.size.trim() === '' || size.stock <= 0 || size.stock > 9999,
     );
 
     if (hasInvalidSize) {
       Alert.alert(
         'Ошибка',
-        'Убедитесь, что у всех размеров указаны непустые названия и количество больше 0',
+        'Убедитесь, что у всех размеров указаны непустые названия и количество от 1 до 9999',
       );
+
       return;
     }
 

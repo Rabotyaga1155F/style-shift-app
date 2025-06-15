@@ -28,8 +28,12 @@ const ProductInfo: FC<IProductInfoProps> = ({
   isFavorite,
 }) => {
   const [quantity, setQuantity] = useState(1);
+  const firstAvailableSize = product.sizes.find(
+    (s: ISize) => s.stock > 0,
+  )?.size;
+
   const [selectedSize, setSelectedSize] = useState<string>(
-    product.sizes[0].size,
+    firstAvailableSize || '',
   );
 
   const selectedSizeObj = product.sizes.find(

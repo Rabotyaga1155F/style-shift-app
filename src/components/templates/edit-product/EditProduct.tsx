@@ -34,10 +34,20 @@ const EditProduct: FC<IEditProduct> = ({
   }, []);
 
   const handleSizeChange = (index: number, value: string) => {
-    const updatedSizes = sizesJson.map((sizeData, idx) =>
-      idx === index ? {...sizeData, stock: Number(value)} : sizeData,
-    );
-    setSizesJson(updatedSizes);
+    // Проверяем, является ли строка положительным целым числом
+    if (/^\d+$/.test(value)) {
+      const updatedSizes = sizesJson.map((sizeData, idx) =>
+        idx === index ? {...sizeData, stock: Number(value)} : sizeData,
+      );
+      setSizesJson(updatedSizes);
+    } else if (value === '') {
+      // Разрешаем очистку поля (например, пользователь удаляет значение)
+      const updatedSizes = sizesJson.map((sizeData, idx) =>
+        idx === index ? {...sizeData, stock: 0} : sizeData,
+      );
+      setSizesJson(updatedSizes);
+    }
+    // В противном случае не обновляем sizesJson
   };
 
   return (
@@ -103,9 +113,26 @@ const EditProduct: FC<IEditProduct> = ({
           <Controller
             control={control}
             name="price"
+            rules={{
+              required: 'Обязательное поле',
+              validate: value => {
+                const number = Number(value);
+                if (!/^\d+$/.test(value)) {
+                  return 'Цена должна быть целым положительным числом';
+                }
+                if (number < 1) {
+                  return 'Цена не может быть меньше 1';
+                }
+                if (value.length > 7) {
+                  return 'Цена не может быть больше 7 цифр';
+                }
+                return true;
+              },
+            }}
             render={({field: {onChange, value}}) => (
               <Field
-                value={value || product.price}
+                maxLength={7}
+                value={value}
                 controllerOnChange={onChange}
                 className={'mt-4'}
                 defaultValue={product.price.toString()}
@@ -176,6 +203,7 @@ const EditProduct: FC<IEditProduct> = ({
                 Размер: {size.size}
               </RalewayText>
               <Field
+                maxLength={4}
                 value={size.stock.toString()}
                 controllerOnChange={value => handleSizeChange(index, value)}
                 className="flex-1 w-32"

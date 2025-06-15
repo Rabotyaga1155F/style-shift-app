@@ -3,7 +3,6 @@ import Home from '@/components/templates/home/Home.tsx';
 import {useTypedNavigation} from '@/hooks/navigation/useTypedNavigation.ts';
 import {IProduct} from '@/types/product.types.ts';
 import {useAuthUserStore} from '@/store/access-token';
-import {useFocusEffect} from '@react-navigation/native';
 import axios from 'axios';
 import {BASE_URL} from '@/constants/url.constants.ts';
 
@@ -49,7 +48,6 @@ const HomePage: FC = () => {
         const banResponse = await axios.get(
           `${BASE_URL}/users/is-banned/${user.userID}`,
         );
-        console.log(banResponse.data.isBanned);
         if (banResponse.data.isBanned) {
           removeUser();
           navigate('SignIn');
@@ -58,8 +56,15 @@ const HomePage: FC = () => {
       }
 
       const response = await axios.get(`${BASE_URL}/products`);
-      setProducts(response.data);
-      setFilteredProducts(response.data);
+
+      const productsWithStock = response.data.filter(
+        (product: IProduct) =>
+          Array.isArray(product.sizes) &&
+          product.sizes.some(size => size.stock > 0),
+      );
+
+      setProducts(productsWithStock);
+      setFilteredProducts(productsWithStock);
     } catch (error) {
       console.error(error);
     }
