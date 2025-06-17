@@ -12,7 +12,6 @@ import Svg, {Circle} from 'react-native-svg';
 import axios from 'axios';
 import {BASE_URL} from '@/constants/url.constants.ts';
 import {WebView} from 'react-native-webview';
-import {STATUS_MAPPING} from '@/components/templates/style-selection/statuses.ts';
 import Cancel from '@/assets/icons/cancel/cancel.svg';
 import {DEFAULT_ICON_SIZE} from '@/constants/icon.constants.ts';
 
@@ -25,7 +24,7 @@ interface ICreateOrderProps {
   modalVisible: boolean;
   quantity: number;
   calculateTotalPrice: (quantity: number) => number;
-  setPickupPointID: (id: string | null) => void; // Функция для обновления pickupPointID
+  setPickupPointID: (id: string | null) => void;
 }
 
 const CreateOrder: FC<ICreateOrderProps> = ({

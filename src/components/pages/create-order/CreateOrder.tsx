@@ -9,7 +9,7 @@ import {DELIVERY_PRICE} from '@/constants/price.constants.ts';
 
 const CreateOrderPage: FC = () => {
   const [modalVisible, setModalVisible] = useState(false);
-  const [pickupPointID, setPickupPointID] = useState<string | null>(null); // Стейт для pickupPointID
+  const [pickupPointID, setPickupPointID] = useState<string | null>(null);
   const route = useTypedRoute<'CreateOrderPage'>();
   const navigation = useTypedNavigation();
 

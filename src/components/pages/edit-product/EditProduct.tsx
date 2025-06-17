@@ -1,4 +1,4 @@
-import React, {FC, useEffect, useState} from 'react';
+import React, {FC, useState} from 'react';
 import EditProduct from '@/components/templates/edit-product/EditProduct.tsx';
 import {useAuthUserStore} from '@/store/access-token';
 import {useTypedRoute} from '@/hooks/navigation/useTypedRoute.ts';
@@ -31,17 +31,13 @@ const EditProductPage: FC = () => {
   const handleCreateOrder = async (data: any) => {
     const formData = new FormData();
 
-    // Преобразуем данные в нужный формат
     formData.append('sellerID', user?.userID || '');
     formData.append('categoryID', product.categoryID);
     formData.append('title', data.title || product.title);
     formData.append('description', data.description || product.description);
     formData.append('price', Number(data.price) || product.price);
-
-    // Используем актуальное состояние sizesJson
     formData.append('sizesJson', JSON.stringify(sizesJson));
 
-    // Проверяем и добавляем изображение
     if (data.imageUrl && data.imageUrl !== product.imageUrl) {
       formData.append('image', {
         uri: data.imageUrl,

@@ -12,6 +12,7 @@ const HomePage: FC = () => {
   const [filteredProducts, setFilteredProducts] = useState<IProduct[]>([]);
   const [favorites, setFavorites] = useState<string[]>([]);
   const [searchText, setSearchText] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
   const user = useAuthUserStore(state => state.user);
   const removeUser = useAuthUserStore(state => state.removeUser);
 
@@ -67,6 +68,8 @@ const HomePage: FC = () => {
       setFilteredProducts(productsWithStock);
     } catch (error) {
       console.error(error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -97,6 +100,10 @@ const HomePage: FC = () => {
       console.error(error);
     }
   };
+
+  if (isLoading) {
+    return null;
+  }
 
   return (
     <Home

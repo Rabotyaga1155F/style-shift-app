@@ -34,20 +34,17 @@ const EditProduct: FC<IEditProduct> = ({
   }, []);
 
   const handleSizeChange = (index: number, value: string) => {
-    // Проверяем, является ли строка положительным целым числом
     if (/^\d+$/.test(value)) {
       const updatedSizes = sizesJson.map((sizeData, idx) =>
         idx === index ? {...sizeData, stock: Number(value)} : sizeData,
       );
       setSizesJson(updatedSizes);
     } else if (value === '') {
-      // Разрешаем очистку поля (например, пользователь удаляет значение)
       const updatedSizes = sizesJson.map((sizeData, idx) =>
         idx === index ? {...sizeData, stock: 0} : sizeData,
       );
       setSizesJson(updatedSizes);
     }
-    // В противном случае не обновляем sizesJson
   };
 
   return (
@@ -57,7 +54,6 @@ const EditProduct: FC<IEditProduct> = ({
           Редактировать товар
         </RalewayText>
 
-        {/* Название товара */}
         <View className={'mt-4'}>
           <RalewayText weight={500} className={'text-md mt-1'}>
             Название
@@ -81,7 +77,6 @@ const EditProduct: FC<IEditProduct> = ({
           )}
         </View>
 
-        {/* Описание товара */}
         <View className={'mt-4'}>
           <RalewayText weight={500} className={'text-md mt-1'}>
             Описание
@@ -105,7 +100,6 @@ const EditProduct: FC<IEditProduct> = ({
           )}
         </View>
 
-        {/* Цена товара */}
         <View className={'mt-4'}>
           <RalewayText weight={500} className={'text-md mt-1'}>
             Цена
@@ -146,7 +140,6 @@ const EditProduct: FC<IEditProduct> = ({
           )}
         </View>
 
-        {/* Фотография */}
         <View className={'mt-4'}>
           <RalewayText weight={500} className={'text-md mt-1'}>
             Фотография
@@ -192,7 +185,6 @@ const EditProduct: FC<IEditProduct> = ({
           )}
         </View>
 
-        {/* Изменение количества размеров */}
         <View className={'mt-6'}>
           <RalewayText weight={600} className={'text-lg text-center mt-4'}>
             Размеры и количество
@@ -214,14 +206,12 @@ const EditProduct: FC<IEditProduct> = ({
           ))}
         </View>
 
-        {/* Кнопка для сохранения изменений */}
         <BigBlueButton
           onPress={handleSubmit(handleCreateOrder)}
           className={'mt-12'}>
           Изменить
         </BigBlueButton>
 
-        {/* Кнопка для удаления товара */}
         <BigBlueButton
           onPress={deleteProduct}
           className={'bg-red-700 mt-6 mb-6'}>
