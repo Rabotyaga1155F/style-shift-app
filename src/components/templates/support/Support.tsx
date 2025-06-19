@@ -1,26 +1,17 @@
-import React, {FC, useState} from 'react';
-import {Alert, View} from 'react-native';
-import {
-  Control,
-  Controller,
-  FieldErrors,
-  SubmitHandler,
-  useForm,
-} from 'react-hook-form';
+import React, {FC} from 'react';
+import {View} from 'react-native';
+import {Control, Controller, FieldErrors} from 'react-hook-form';
 import Layout from '@/components/layout/Layout.tsx';
 import RalewayText from '@/components/ui/fonts/RalewayText.tsx';
 import Field from '@/components/ui/fields/Field.tsx';
 import BigBlueButton from '@/components/ui/buttons/big-blue-button/BigBlueButton.tsx';
-import {useAuthUserStore} from '@/store/access-token';
-import axios from 'axios';
-import {BASE_URL} from '@/constants/url.constants.ts';
 import OrderModal from '@/components/elements/order-modal/OrderModal.tsx';
 import {SupportFormValues} from '@/components/pages/support/Support.tsx';
 import {IUser} from '@/types/user.types.ts';
 
 interface ISupportProps {
   control: Control<SupportFormValues>;
-  user: IUser;
+  user?: IUser;
   errors: FieldErrors<SupportFormValues>;
   isModalVisible: boolean;
   handleCloseModal: () => void;
@@ -62,7 +53,7 @@ const Support: FC<ISupportProps> = ({
               value={value}
               className={'mt-4'}
               placeholder="Ваш email"
-              defaultValue={user.email}
+              defaultValue={user?.email ?? ''}
             />
           )}
         />

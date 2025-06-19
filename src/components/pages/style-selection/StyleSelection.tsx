@@ -1,15 +1,12 @@
-import React, {FC, useEffect, useMemo, useRef, useState} from 'react';
+import React, {FC, useEffect, useRef, useState} from 'react';
 import StyleSelection from '@/components/templates/style-selection/StyleSelection.tsx';
 import {useForm} from 'react-hook-form';
 import {useAuthUserStore} from '@/store/access-token';
-import {RadioButtonProps} from 'react-native-radio-buttons-group';
 import {goals, sphereOfActivity} from '../../../data/slyle-selection-data.tsx';
-import {Alert, ScrollView} from 'react-native';
-import {visitor} from 'nativewind/dist/babel/visitor';
+import {ScrollView} from 'react-native';
 import {StyleCardFormValues} from '@/components/pages/style-selection/style-card-form-values.types.ts';
 import axios from 'axios';
 import {BASE_URL} from '@/constants/url.constants.ts';
-import {IUser} from '@/types/user.types.ts';
 import {IUserQuiz} from '@/types/quiz.types.ts';
 import {STYLE_CARD_STATUS_MAPPING} from '@/components/templates/style-selection/statuses.ts';
 
@@ -23,7 +20,7 @@ const StyleSelectionPage: FC = () => {
     checkQuiz();
   }, []);
 
-  const user = useAuthUserStore(state => state.user!);
+  const user = useAuthUserStore(state => state.user);
 
   const {
     control,
@@ -34,8 +31,8 @@ const StyleSelectionPage: FC = () => {
   } = useForm<StyleCardFormValues>({
     mode: 'onChange',
     defaultValues: {
-      name: user.username,
-      email: user.email,
+      name: user?.username ?? '',
+      email: user?.email ?? '',
       sphere: sphereOfActivity[0],
       goal: goals[0],
       brands: [],
@@ -50,7 +47,7 @@ const StyleSelectionPage: FC = () => {
     console.log('data: ', JSON.stringify(data));
     await axios
       .post(`${BASE_URL}/style-cards`, {
-        UserID: user.userID,
+        UserID: user!.userID,
         StyleCardStatusID: STYLE_CARD_STATUS_MAPPING.NOT_PAID,
         Quiz: JSON.stringify(data),
       })
@@ -66,7 +63,7 @@ const StyleSelectionPage: FC = () => {
   const checkQuiz = async () => {
     try {
       const response = await axios.get(
-        `${BASE_URL}/style-cards/user/${user.userID}`,
+        `${BASE_URL}/style-cards/user/${user!.userID}`,
       );
       const quizData = response.data?.[0];
 

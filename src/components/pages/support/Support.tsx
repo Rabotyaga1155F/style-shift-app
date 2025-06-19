@@ -14,7 +14,7 @@ export interface SupportFormValues {
 }
 
 const SupportPage: FC = () => {
-  const user = useAuthUserStore(state => state.user!);
+  const user = useAuthUserStore(state => state.user);
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   const {
@@ -24,7 +24,7 @@ const SupportPage: FC = () => {
     handleSubmit,
   } = useForm<SupportFormValues>({
     defaultValues: {
-      email: user.email,
+      email: user?.email ?? '',
     },
   });
 
@@ -33,7 +33,7 @@ const SupportPage: FC = () => {
 
     try {
       const response = await axios.post(`${BASE_URL}/support-request`, {
-        userId: user.userID,
+        userId: user!.userID,
         statusId: DEFAULT_SUPPORT_STATUS,
         ...data,
       });
@@ -58,7 +58,7 @@ const SupportPage: FC = () => {
   return (
     <Support
       control={control}
-      user={user}
+      user={user ?? undefined}
       errors={errors}
       isModalVisible={isModalVisible}
       handleCloseModal={handleCloseModal}
